@@ -1,103 +1,214 @@
-import Image from "next/image";
+'use client';
+
+import Link from 'next/link';
+import { useState, useEffect } from 'react';
+import { estoqueService } from '@/services/estoqueService';
+import { Maquina } from '@/types';
 
 export default function Home() {
+  const [estatisticas, setEstatisticas] = useState({
+    totalEmEstoque: 0,
+    totalEntregasPendentes: 0,
+    totalMaquinas: 0
+  });
+  
+  const [proximosEventos, setProximosEventos] = useState<Maquina[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        // Buscar estatísticas
+        console.log('Buscando estatísticas do Supabase');
+        const stats = await estoqueService.getEstatisticas();
+        setEstatisticas(stats);
+        
+        // Buscar próximos eventos
+        console.log('Buscando próximos eventos do Supabase');
+        const eventos = await estoqueService.getProximosEventos();
+        setProximosEventos(eventos);
+      } catch (err) {
+        console.error('Erro ao buscar dados do dashboard:', err);
+        setError('Erro ao conectar com o servidor. Por favor, verifique sua conexão.');
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchData();
+  }, []);
+  
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('pt-BR');
+  };
+  
+  const getTipoEvento = (maquina: Maquina) => {
+    if (maquina.previsao_retirada && (!maquina.data_entrega || new Date(maquina.previsao_retirada) < new Date(maquina.data_entrega))) {
+      return 'Retirada';
+    }
+    return 'Entrega';
+  };
+  
+  const getDataEvento = (maquina: Maquina) => {
+    const tipo = getTipoEvento(maquina);
+    return tipo === 'Retirada' ? maquina.previsao_retirada : maquina.data_entrega;
+  };
+  
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <div className="space-y-8">
+      {error && (
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
+          <strong className="font-bold">Erro! </strong>
+          <span className="block sm:inline">{error}</span>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+      )}
+      
+      <section className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-poloar-azul">Dashboard de Estoque</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-2">Máquinas em Estoque</h3>
+            <p className="text-3xl font-bold text-poloar-azul">
+              {loading ? '--' : estatisticas.totalEmEstoque}
+            </p>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-2">Entregas Pendentes</h3>
+            <p className="text-3xl font-bold text-poloar-vermelho">
+              {loading ? '--' : estatisticas.totalEntregasPendentes}
+            </p>
+          </div>
+          
+          <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+            <h3 className="text-lg font-semibold mb-2">Total de Máquinas</h3>
+            <p className="text-3xl font-bold text-gray-700">
+              {loading ? '--' : estatisticas.totalMaquinas}
+            </p>
+          </div>
+        </div>
+        
+        <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mb-6">
+          <h3 className="text-lg font-semibold mb-4">Gráfico de Status</h3>
+          <div className="h-64 flex items-center justify-center bg-gray-100 rounded">
+            {loading ? (
+              <p className="text-gray-500">Carregando gráfico...</p>
+            ) : (
+              <div className="flex w-full h-full items-end justify-around px-8 py-4">
+                <div className="flex flex-col items-center">
+                  <div 
+                    className="bg-poloar-azul w-16" 
+                    style={{ 
+                      height: `${estatisticas.totalEmEstoque / estatisticas.totalMaquinas * 100}%`,
+                      minHeight: estatisticas.totalEmEstoque > 0 ? '20px' : '0'
+                    }}
+                  ></div>
+                  <p className="mt-2 text-sm">Em Estoque</p>
+                  <p className="font-bold">{estatisticas.totalEmEstoque}</p>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div 
+                    className="bg-green-500 w-16" 
+                    style={{ 
+                      height: `${(estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes) / estatisticas.totalMaquinas * 100}%`,
+                      minHeight: (estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes) > 0 ? '20px' : '0'
+                    }}
+                  ></div>
+                  <p className="mt-2 text-sm">Entregues/Retirados</p>
+                  <p className="font-bold">{estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes}</p>
+                </div>
+                
+                <div className="flex flex-col items-center">
+                  <div 
+                    className="bg-poloar-vermelho w-16" 
+                    style={{ 
+                      height: `${estatisticas.totalEntregasPendentes / estatisticas.totalMaquinas * 100}%`,
+                      minHeight: estatisticas.totalEntregasPendentes > 0 ? '20px' : '0'
+                    }}
+                  ></div>
+                  <p className="mt-2 text-sm">Pendentes</p>
+                  <p className="font-bold">{estatisticas.totalEntregasPendentes}</p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </section>
+      
+      <section className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-poloar-azul">Ações Rápidas</h2>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          <Link href="/estoque" 
+                className="block p-4 bg-poloar-azul text-white rounded-lg text-center hover:bg-blue-800 transition">
+            Ver Estoque Completo
+          </Link>
+          
+          <Link href="/cadastrar" 
+                className="block p-4 bg-green-600 text-white rounded-lg text-center hover:bg-green-700 transition">
+            Cadastrar Nova Máquina
+          </Link>
+          
+          <Link href="/exportar" 
+                className="block p-4 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
+            Exportar Relatórios
+          </Link>
+        </div>
+      </section>
+      
+      <section className="bg-white p-6 rounded-lg shadow-md">
+        <h2 className="text-2xl font-bold mb-4 text-poloar-azul">Próximas Entregas/Retiradas</h2>
+        
+        <div className="overflow-x-auto">
+          <table className="min-w-full bg-white">
+            <thead>
+              <tr className="table-header">
+                <th className="py-2 px-4 text-left">Cliente</th>
+                <th className="py-2 px-4 text-left">Modelo</th>
+                <th className="py-2 px-4 text-left">Data</th>
+                <th className="py-2 px-4 text-left">Tipo</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loading ? (
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="py-3 px-4" colSpan={4}>
+                    Carregando dados...
+                  </td>
+                </tr>
+              ) : proximosEventos.length === 0 ? (
+                <tr className="border-b hover:bg-gray-50">
+                  <td className="py-3 px-4" colSpan={4}>
+                    Nenhum evento programado.
+                  </td>
+                </tr>
+              ) : (
+                proximosEventos.map((evento, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="py-3 px-4">{evento.cliente}</td>
+                    <td className="py-3 px-4">{evento.modelo}</td>
+                    <td className="py-3 px-4">{formatDate(getDataEvento(evento))}</td>
+                    <td className="py-3 px-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium 
+                        ${getTipoEvento(evento) === 'Entrega' ? 'bg-blue-100 text-blue-800' : 'bg-purple-100 text-purple-800'}`}
+                      >
+                        {getTipoEvento(evento)}
+                      </span>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
     </div>
   );
 }

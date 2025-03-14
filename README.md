@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sistema de Gerenciamento de Estoque - PoloAr
 
-## Getting Started
+Sistema web para gerenciar o estoque de máquinas de ar condicionado da PoloAr, permitindo exibir, cadastrar, editar e remover registros.
 
-First, run the development server:
+## Tecnologias Utilizadas
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend**: Next.js para criação de páginas e rotas dinâmicas
+- **Estilização**: Tailwind CSS com cores personalizadas da PoloAr
+- **Banco de Dados**: Supabase (PostgreSQL) para gerenciamento centralizado dos dados
+- **Exportação de Dados**: Funcionalidades para exportar os registros em formatos XLSM e CSV
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Funcionalidades Principais
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Dashboard**: Visualização rápida de estatísticas e próximas entregas/retiradas
+2. **Estoque**: Listagem completa de máquinas com filtros e ordenação
+3. **Cadastro**: Formulário para adicionar novas máquinas ao estoque
+4. **Exportação**: Geração de relatórios em formatos XLSM e CSV
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Configuração do Projeto
 
-## Learn More
+### Pré-requisitos
 
-To learn more about Next.js, take a look at the following resources:
+- Node.js 18.x ou superior
+- NPM ou Yarn
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Instalação
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/estoque-poloar.git
+   cd estoque-poloar
+   ```
 
-## Deploy on Vercel
+2. Instale as dependências:
+   ```bash
+   npm install
+   # ou
+   yarn install
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Configure as variáveis de ambiente:
+   Crie um arquivo `.env.local` na raiz do projeto com as seguintes variáveis:
+   ```
+   NEXT_PUBLIC_SUPABASE_URL=https://seu-projeto.supabase.co
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=sua-chave-anonima
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Inicie o servidor de desenvolvimento:
+   ```bash
+   npm run dev
+   # ou
+   yarn dev
+   ```
+
+5. Acesse o sistema em `http://localhost:3000`
+
+## Estrutura do Banco de Dados
+
+O sistema utiliza uma tabela `estoque` no Supabase com os seguintes campos:
+
+- `id`: Identificador único (gerado automaticamente)
+- `modelo`: Modelo da máquina
+- `quantidade`: Quantidade de unidades
+- `codigo`: Código de identificação da máquina
+- `consultor`: Nome do consultor responsável
+- `cliente`: Nome do cliente
+- `contato`: Informações de contato
+- `data_entrega`: Data de entrega da máquina
+- `quem_recebeu`: Pessoa que recebeu a máquina
+- `previsao_retirada`: Data prevista para retirada
+- `data_saida`: Data efetiva de saída
+- `quem_entregou`: Pessoa que entregou a máquina
+- `status`: Status atual ('Em estoque', 'Entregue', 'Retirado', 'Pendente')
+- `obs`: Observações adicionais
+- `created_at`: Data de criação do registro (gerado automaticamente)
+
+## Licença
+
+Este projeto é propriedade da PoloAr e seu uso é restrito aos funcionários e colaboradores autorizados.
