@@ -155,7 +155,7 @@ export const estoqueService = {
   }> {
     const { data, error } = await supabase
       .from('estoque')
-      .select('status');
+      .select('status, quantidade');
       
     if (error) {
       console.error('Erro ao buscar estatísticas:', error);
@@ -166,9 +166,14 @@ export const estoqueService = {
       };
     }
     
-    const totalMaquinas = data.length;
-    const totalEmEstoque = data.filter(item => item.status === 'Em estoque').length;
-    const totalEntregasPendentes = data.filter(item => item.status === 'Pendente').length;
+    // Somando as quantidades para cada categoria
+    const totalMaquinas = data.reduce((total, item) => total + (item.quantidade || 1), 0);
+    const totalEmEstoque = data
+      .filter(item => item.status === 'Em estoque')
+      .reduce((total, item) => total + (item.quantidade || 1), 0);
+    const totalEntregasPendentes = data
+      .filter(item => item.status === 'Pendente')
+      .reduce((total, item) => total + (item.quantidade || 1), 0);
     
     return {
       totalEmEstoque,

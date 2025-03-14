@@ -2,12 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { estoqueService } from '@/services/estoqueService';
 import { MaquinaFormData } from '@/types';
 
 export default function CadastrarMaquina() {
-  const router = useRouter();
   const [formData, setFormData] = useState<MaquinaFormData>({
     modelo: '',
     quantidade: 1,
@@ -65,10 +63,10 @@ export default function CadastrarMaquina() {
           obs: ''
         });
         
-        // Redirecionar após 2 segundos
-        setTimeout(() => {
-          router.push('/estoque');
-        }, 2000);
+        // Removendo a redireção
+        // setTimeout(() => {
+        //   router.push('/estoque');
+        // }, 2000);
       } else {
         setError(result.error || 'Erro ao cadastrar máquina');
       }
@@ -92,7 +90,7 @@ export default function CadastrarMaquina() {
       {success && (
         <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
           <strong className="font-bold">Sucesso! </strong>
-          <span className="block sm:inline">Máquina cadastrada com sucesso. Redirecionando...</span>
+          <span className="block sm:inline">Máquina cadastrada com sucesso.</span>
         </div>
       )}
       

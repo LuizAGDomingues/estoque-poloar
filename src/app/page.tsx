@@ -99,14 +99,16 @@ export default function Home() {
           <div className="h-64 flex items-center justify-center bg-gray-100 rounded">
             {loading ? (
               <p className="text-gray-500">Carregando gráfico...</p>
+            ) : estatisticas.totalMaquinas === 0 ? (
+              <p className="text-gray-500">Nenhuma máquina cadastrada</p>
             ) : (
               <div className="flex w-full h-full items-end justify-around px-8 py-4">
                 <div className="flex flex-col items-center">
                   <div 
                     className="bg-poloar-azul w-16" 
                     style={{ 
-                      height: `${estatisticas.totalEmEstoque / estatisticas.totalMaquinas * 100}%`,
-                      minHeight: estatisticas.totalEmEstoque > 0 ? '20px' : '0'
+                      height: estatisticas.totalEmEstoque > 0 ? '100px' : '0',
+                      minHeight: estatisticas.totalEmEstoque > 0 ? '100px' : '0'
                     }}
                   ></div>
                   <p className="mt-2 text-sm">Em Estoque</p>
@@ -117,8 +119,8 @@ export default function Home() {
                   <div 
                     className="bg-green-500 w-16" 
                     style={{ 
-                      height: `${(estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes) / estatisticas.totalMaquinas * 100}%`,
-                      minHeight: (estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes) > 0 ? '20px' : '0'
+                      height: (estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes) > 0 ? '100px' : '0',
+                      minHeight: (estatisticas.totalMaquinas - estatisticas.totalEmEstoque - estatisticas.totalEntregasPendentes) > 0 ? '100px' : '0'
                     }}
                   ></div>
                   <p className="mt-2 text-sm">Entregues/Retirados</p>
@@ -129,8 +131,8 @@ export default function Home() {
                   <div 
                     className="bg-poloar-vermelho w-16" 
                     style={{ 
-                      height: `${estatisticas.totalEntregasPendentes / estatisticas.totalMaquinas * 100}%`,
-                      minHeight: estatisticas.totalEntregasPendentes > 0 ? '20px' : '0'
+                      height: estatisticas.totalEntregasPendentes > 0 ? '100px' : '0',
+                      minHeight: estatisticas.totalEntregasPendentes > 0 ? '100px' : '0'
                     }}
                   ></div>
                   <p className="mt-2 text-sm">Pendentes</p>
@@ -147,17 +149,17 @@ export default function Home() {
         
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <Link href="/estoque" 
-                className="block p-4 bg-poloar-azul text-white rounded-lg text-center hover:bg-blue-800 transition">
+                className="block p-4 bg-blue-600 text-white rounded-lg text-center font-medium border-2 border-blue-700 shadow hover:bg-blue-700 transition duration-200">
             Ver Estoque Completo
           </Link>
           
           <Link href="/cadastrar" 
-                className="block p-4 bg-green-600 text-white rounded-lg text-center hover:bg-green-700 transition">
+                className="block p-4 bg-green-600 text-white rounded-lg text-center hover:bg-green-700 transition font-medium border border-green-700 shadow-sm">
             Cadastrar Nova Máquina
           </Link>
           
           <Link href="/exportar" 
-                className="block p-4 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition">
+                className="block p-4 bg-purple-600 text-white rounded-lg text-center hover:bg-purple-700 transition font-medium border border-purple-700 shadow-sm">
             Exportar Relatórios
           </Link>
         </div>

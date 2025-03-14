@@ -126,13 +126,13 @@ export default function Estoque() {
             <span className="mr-1">+</span> Cadastrar Máquina
           </Link>
           <button 
-            className="bg-green-600 text-white px-3 py-2 rounded hover:bg-green-700 transition"
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition font-medium border border-green-700 shadow-sm"
             onClick={handleExportXLSM}
           >
             Exportar XLSM
           </button>
           <button 
-            className="bg-purple-600 text-white px-3 py-2 rounded hover:bg-purple-700 transition"
+            className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition font-medium border border-purple-700 shadow-sm"
             onClick={handleExportCSV}
           >
             Exportar CSV
@@ -206,7 +206,7 @@ export default function Estoque() {
             
             <div className="flex items-end">
               <button 
-                className="px-4 py-2 bg-poloar-azul text-white rounded-md hover:bg-blue-700 transition" 
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition border border-blue-700 shadow-sm font-medium" 
                 onClick={handleSearch}
               >
                 Buscar
